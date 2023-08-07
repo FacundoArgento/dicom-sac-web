@@ -1,0 +1,49 @@
+{% extends './layout.html' %}
+
+{% block customcss %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css')}}" >
+{% endblock %}
+
+{% block title %} Formulario {% endblock %}
+
+{% block body%}
+
+    <form class="needs-validation" action="#" novalidate>
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <label for="firstName" class="form-label">First name</label>
+            <input type="text" class="form-control" id="firstName" placeholder="" value="" required>
+            <div class="invalid-feedback">
+              Valid firs tname is required.
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <label for="lastName" class="form-label">Last name</label>
+            <input type="text" class="form-control" id="lastName" placeholder="" value="" required>
+            <div class="invalid-feedback">
+              Valid last name is required.
+            </div>
+          </div>
+
+          <div class="col-12">
+            <label for="username" class="form-label">Username</label>
+            <div class="input-group has-validation">
+              <span class="input-group-text">@</span>
+              <input type="text" class="form-control" id="username" placeholder="Username" required>
+              <div class="invalid-feedback">
+                Your username is required.
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-12">
+            <label for="username" class="form-label">Seleccione la carpeta que contiene el Estudio Completo</label>
+            <input type="file" class="form-control" id="dicom-folder" name="dicom-folder" webkitdirectory="true" directory required>
+            <div class="invalid-feedback">
+                Debe ingresar la carpeta con el estudio completo a subir.
+            </div>
+          </div>
+        </div>
+    </form>
+{% endblock %}
