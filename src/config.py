@@ -2,6 +2,7 @@ from decouple import config
 
 class Config:
     SECRET_KEY = config('SECRET_KEY')
+    #CAPTCHA_CONFIG = {'SECRET_CAPTCHA_KEY': config('SECRET_CAPTCHA_KEY')}
 
 class DevelopmentConfig(Config):
     DEBUG = config('DEBUG')

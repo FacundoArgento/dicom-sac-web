@@ -1,26 +1,19 @@
 {% extends './layout.html' %}
 
-{% block customcss %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css')}}" >
-{% endblock %}
-
 {% block title %} Login {% endblock %}
 
 {% block body%}
-
   <form class="form-signin" action="/login" method="POST">
     {% with messages = get_flashed_messages() %}
-
-    {% if messages %}
-    <br />
-    {% for message in messages %}
-    <div class="alert alert-primary alert-dismissible" role="alert">
-        <strong>{{ message }}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% endfor %}
-    {% endif %}
-
+      {% if messages %}
+        <br/>
+        {% for message in messages %}
+          <div class="alert alert-primary alert-dismissible" role="alert">
+              <strong>{{ message }}</strong>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
     {% endwith %}
     <h1 class="h3 mb-3 fw-normal">Autenticación</h1>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

@@ -2,16 +2,22 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_simple_captcha import CAPTCHA
 
+# Config
 from config import config
 
-# Models:
+# Models
 from models.ModelUser import ModelUser
+from models.ModelInstitution import ModelInstitution
 
-# Entities:
+# Entities
 from models.entities.User import User
 
 app = Flask(__name__)
+
+#CAPTCHA = CAPTCHA(config=config['development'].CAPTCHA_CONFIG)
+#app = CAPTCHA.init_app(app)
 
 csrf = CSRFProtect()
 db = MySQL(app)
@@ -22,12 +28,12 @@ def load_user(id):
     return ModelUser.getById(db, id)
 
 # Routes
-
 @app.route('/')
 def index():
     if current_user != None:
         return redirect(url_for('form'))
     else:
+        #captcha = CAPTCHA.create()
         return redirect(url_for('login'))
 
 @app.route('/login', methods = ['GET','POST'])
@@ -55,6 +61,7 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
+    #captcha = CAPTCHA.create()
     return redirect(url_for('login'))
 
 
@@ -65,7 +72,8 @@ def form():
         print("hola")
         # funcionalidad subida de dicoms
     else:    
-        return render_template('/form.html')
+        institutions = ModelInstitution.getAllInstitutions(db)
+        return render_template('/form.html', institutions = institutions)
 
 # Status errors
 

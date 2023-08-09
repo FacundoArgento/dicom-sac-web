@@ -7,12 +7,12 @@ class ModelUser():
     def login(self, db, user):
         try:
             cursor = db.connection.cursor()
-            sql = """SELECT id, username, password, active FROM user 
+            sql = """SELECT id, username, password, active, operator_name FROM user 
                     WHERE username = '{}'""".format(user.username)
             cursor.execute(sql)
             row = cursor.fetchone()
             if row != None:
-                user = User(row[0], row[1], User.check_password(row[2], user.password), row[3])
+                user = User(row[0], row[1], User.check_password(row[2], user.password), row[3], row[4])
                 return user
             else:
                 return None
@@ -23,11 +23,11 @@ class ModelUser():
     def getById(self, db, id):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT id, username, active FROM user WHERE id = {}".format(id)
+            sql = "SELECT id, username, active, operator_name FROM user WHERE id = {}".format(id)
             cursor.execute(sql)
             row = cursor.fetchone()
             if row != None:
-                return User(row[0], row[1], None, row[2])
+                return User(row[0], row[1], None, row[2], row[3])
             else:
                 return None
         except Exception as ex:

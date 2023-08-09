@@ -11,16 +11,18 @@
     {% endblock %}
 </head>
 <body class="text-center">
+    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+        <img width="120" height="24" class="fs-4" src="{{ url_for('static', filename='images/logo-unnoba.png') }}"></img>
+      </a>
+      <p class="d-flex align-items-center mb-3 mb-md-0"> {{ current_user.username }} </p>
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <a href="{{ url_for('logout') }}" class="nav-link">Salir</a>
+        </li>
+      </ul>
+    </header>
     <div class="container">
-        <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
-          <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-            <img class="fs-4" src="{{ url_for('static', filename='images/logo-unnoba.png') }}"></img>
-          </a>
-          <p class="d-flex align-items-center mb-3 mb-md-0 me-md-auto"> {{ current_user.username }} </p>
-          <ul class="nav nav-pills">
-            <li class="nav-item"><a href="{{ url_for('logout') }}" class="nav-link">Salir</a></li>
-          </ul>
-        </header>
         {% block body %}
     
         {% endblock %}
