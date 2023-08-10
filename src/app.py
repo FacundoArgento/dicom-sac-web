@@ -14,6 +14,9 @@ from models.ModelInstitution import ModelInstitution
 # Entities
 from models.entities.User import User
 
+# Payload
+from services.DicomUploader import uploadCompleteStudy
+
 app = Flask(__name__)
 
 #CAPTCHA = CAPTCHA(config=config['development'].CAPTCHA_CONFIG)
@@ -68,12 +71,36 @@ def logout():
 @app.route('/form', methods = ['GET','POST'])
 @login_required
 def form():
+    institutions = ModelInstitution.getAllInstitutions(db)
     if request.method == 'POST':
-        print("hola")
-        # funcionalidad subida de dicoms
-    else:    
-        institutions = ModelInstitution.getAllInstitutions(db)
+        # institutionName = request.form['institution']
+        # operator = current_user.operator_name
+        # tipoEstudio = request.form['tipo-estudio']
+        # tipoDiagnostico = request.form['tipo-diagnostico']
+        # equipo = request.form['equipo']
+        # dicomsFolder = request.form['dicoms-foolder'] 
+        # uploadCompleteStudy(institutionName, operator, tipoEstudio, tipoDiagnostico, equipo, dicomsFolder)
+        # flash("Estudio subido correctamente.")
+        # return render_template('/form.html', institutions = institutions)
+        filess = request.files.getlist("file")
+        for file in filess:
+            print(file.filename)
         return render_template('/form.html', institutions = institutions)
+    else:    
+        return render_template('/form.html', institutions = institutions)
+
+@app.route("/upload", methods=["POST"])
+def upload():
+    uploaded_files = request.files.getlist("file[]")
+    institutionName = request.form['institution']
+    operator = current_user.operator_name
+    tipoEstudio = request.form['tipo-estudio']
+    tipoDiagnostico = request.form['tipo-diagnostico']
+    equipo = request.form['equipo']
+    upload_folder= config['development'].UPLOAD_FOLDER
+    uploadCompleteStudy(institutionName, operator, tipoEstudio, tipoDiagnostico, equipo, uploaded_files, upload_folder)
+    flash("Estudio subido correctamente.")
+    return render_template('/form.html')
 
 # Status errors
 
