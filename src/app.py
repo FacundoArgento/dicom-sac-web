@@ -68,26 +68,11 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/form', methods = ['GET','POST'])
+@app.route('/form', methods = ['GET'])
 @login_required
 def form():
-    institutions = ModelInstitution.getAllInstitutions(db)
-    if request.method == 'POST':
-        # institutionName = request.form['institution']
-        # operator = current_user.operator_name
-        # tipoEstudio = request.form['tipo-estudio']
-        # tipoDiagnostico = request.form['tipo-diagnostico']
-        # equipo = request.form['equipo']
-        # dicomsFolder = request.form['dicoms-foolder'] 
-        # uploadCompleteStudy(institutionName, operator, tipoEstudio, tipoDiagnostico, equipo, dicomsFolder)
-        # flash("Estudio subido correctamente.")
-        # return render_template('/form.html', institutions = institutions)
-        filess = request.files.getlist("file")
-        for file in filess:
-            print(file.filename)
-        return render_template('/form.html', institutions = institutions)
-    else:    
-        return render_template('/form.html', institutions = institutions)
+    institutions = ModelInstitution.getAllInstitutions(db)  
+    return render_template('/form.html', institutions = institutions)
 
 @app.route("/upload", methods=["POST"])
 def upload():
@@ -97,10 +82,10 @@ def upload():
     tipoEstudio = request.form['tipo-estudio']
     tipoDiagnostico = request.form['tipo-diagnostico']
     equipo = request.form['equipo']
-    upload_folder= config['development'].UPLOAD_FOLDER
-    uploadCompleteStudy(institutionName, operator, tipoEstudio, tipoDiagnostico, equipo, uploaded_files, upload_folder)
+    temp_folder= config['development'].TEMP_FOLDER
+    uploadCompleteStudy(institutionName, operator, tipoEstudio, tipoDiagnostico, equipo, uploaded_files, temp_folder)
     flash("Estudio subido correctamente.")
-    return render_template('/form.html')
+    return redirect(url_for('form'))
 
 # Status errors
 

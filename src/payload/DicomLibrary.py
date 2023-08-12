@@ -24,9 +24,7 @@ def anonymize_files(path):
     try:
         for filename in iglob(recursive_path, recursive=True):
             if(filename.endswith(".dcm")):
-                dicom_path = pathh.join(path, filename)
-                
-                dicom = dcmread(dicom_path)
+                dicom = dcmread(filename)
 
                 dicom.AcquisitionDate=""
                 dicom.AccessionNumber=""
@@ -63,7 +61,7 @@ def anonymize_files(path):
                 dicom.ReferringPhysicianName=""
                 dicom.RequestingPhysician=""
 
-                dcmwrite(dataset=dicom, filename=dicom_path)
+                dcmwrite(dataset=dicom, filename=filename)
 
                 i+=1
             else:
@@ -76,7 +74,7 @@ def anonymize_files(path):
         raise ValueError("Value not found") from e
     finally:
         if(dicom != None):
-            dcmwrite(dataset=dicom, filename=dicom_path)
+            dcmwrite(dataset=dicom, filename=filename)
 
     print(f"{i} files anonymized successfully.")
 
