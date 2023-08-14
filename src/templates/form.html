@@ -22,15 +22,7 @@
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <div class="col-sm-6">
             <label for="institution" class="form-label">Institución</label>
-            <select class="form-select" name="institution" required>
-              <option value="" disabled selected>Seleccione una opción</option>
-              {% for institution in institutions %}
-              <option value="{{institution.name}}">{{institution.name}}</option>
-              {% endfor %}
-            </select>
-            <div class="invalid-feedback">
-              Debe seleccionar la institucion a la que pertenece.
-            </div>
+            <span class="input-group-text"> {{ institution.name  }}</span>
           </div>
 
           <div class="col-sm-6">
@@ -55,8 +47,9 @@
             <label for="tipo-diagnostico" class="form-label">Tipo de Diagnostico</label>
             <select class="form-select" id="tipo-diagnostico" name="tipo-diagnostico" required>
               <option value="" disabled selected>Seleccione una opción</option>
-              <option value="Patologico">Patológico</option>
-              <option value="No Patologico"> No Patológico</option>
+              {% for d in diagnoses %}
+              <option value="{{ d }}"> {{ d.name }}</option>
+              {% endfor %}
             </select>
             <div class="invalid-feedback">
               Debe seleccionar el tipo de diagnostico sobre el estudio a subir.
@@ -65,7 +58,11 @@
 
           <div class="col-sm-6">
             <label for="equipo" class="form-label">Equipo (Marca/Modelo)</label>
-            <input type="text" class="form-control" id="equipo" name="equipo">
+            <select class="form-select" id="equipo" name="equipo" required>
+              {% for equipment in equipments %}
+              <option value="{{ equipment }}"> {{ equipment.brand  }}</option>
+              {% endfor %}
+            </select>
             <div class="invalid-feedback">
               Debe indicar Marca/Modelo del equipo.
             </div>

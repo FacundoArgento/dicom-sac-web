@@ -1,20 +1,21 @@
-from .entities.Institution import Institution
+from .entities.Diagnosis import Diagnosis
 
 
-class ModelInstitution():
+class ModelDiagnosis():
+
 
     @classmethod
-    def getAllInstitutions(self, db):
+    def getAllDiagnosis(self, db):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT * FROM institution"
+            sql = "SELECT * FROM diagnosis"
             cursor.execute(sql)
             records = cursor.fetchall()
-            institutions = []
+            all_diagnosis = []
             for row in records:
-                inst = Institution(row[0], row[1])   
-                institutions.append(inst)
-            return institutions
+                d = Diagnosis(row[0], row[1])   
+                all_diagnosis.append(d)
+            return all_diagnosis
         except Exception as ex:
             raise Exception(ex)
 
@@ -22,11 +23,11 @@ class ModelInstitution():
     def getById(self, db, id):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT id, name FROM institution WHERE id = {}".format(id)
+            sql = "SELECT id, name FROM diagnosis WHERE id = {}".format(id)
             cursor.execute(sql)
             row = cursor.fetchone()
             if row != None:
-                return Institution(row[0], row[1])
+                return Diagnosis(row[0], row[1])
             else:
                 return None
         except Exception as ex:

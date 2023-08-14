@@ -1,22 +1,59 @@
 from payload.DicomLibrary import anonymize_files
 import os
 from shutil import rmtree
+from glob import iglob
+from obs import ObsClient
 
-def uploadCompleteStudy(institutionName, operator, tipoEstudio, tipoDiagnostico, equipo, uploaded_files, temp_folder):
+# Config
+from config import config
+
+def uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, uploaded_files, temp_folder):
     try:
         save_tmp_folders(uploaded_files, temp_folder)
         anonymize_files(temp_folder)
-        #upload_folders()
-        remove_tmp_folders(temp_folder)        
+        upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, temp_folder)
     except OSError as err:
         print("OS error: ", err)
         raise
     except Exception as err:
         print("Exception: ", err)
+    finally:
+        remove_tmp_folders(temp_folder)    
 
 
-def upload_folders():
-    print("to be implemented")
+def upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, folder):
+    AK = config['development'].AK
+    SK = config['development'].SK
+    server = config['development'].HUAWEI_SERVER
+    bucketName = config['development'].BUCKET_NAME
+
+    # Constructs a obs client instance with your account for accessing OBS
+    obsClient = ObsClient(access_key_id=AK, secret_access_key=SK, server=server)
+    
+    folderpath = folder
+    recursive_path = folderpath + "/**"
+
+    save_folder = institution.name
+    
+    try: 
+        for filename in iglob(recursive_path, recursive=True):
+            objectKey = save_folder + filename
+            objectKey = objectKey.replace("tmp/", "/")
+            if os.path.isfile(filename):
+                resp = obsClient.putFile(bucketName=bucketName, objectKey=objectKey, file_path=filename) 
+
+                if resp.status < 300: 
+                    print('requestId:', resp.requestId) 
+                    print('uploaded Filename:', objectKey)
+                else: 
+                    print('errorCode:', resp.errorCode) 
+                    print('errorMessage:', resp.errorMessage)
+                    break
+    except:
+        import traceback
+        print(traceback.format_exc())
+    finally:
+        obsClient.close()
 
 def save_tmp_folders(uploaded_files, dest_folder):
     for file in uploaded_files:

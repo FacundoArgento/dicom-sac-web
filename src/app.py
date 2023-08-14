@@ -10,6 +10,9 @@ from config import config
 # Models
 from models.ModelUser import ModelUser
 from models.ModelInstitution import ModelInstitution
+from models.ModelEquipment import ModelEquipment
+from models.ModelDiagnosis import ModelDiagnosis
+#from models.ModelStudy import ModelStudy
 
 # Entities
 from models.entities.User import User
@@ -71,19 +74,21 @@ def logout():
 @app.route('/form', methods = ['GET'])
 @login_required
 def form():
-    institutions = ModelInstitution.getAllInstitutions(db)  
-    return render_template('/form.html', institutions = institutions)
+    institution = ModelInstitution.getById(db, current_user.institution_id)
+    equipments = ModelEquipment.getAllByInstitutionId(db, institution.id)
+    diagnoses = ModelDiagnosis.getAllDiagnosis(db)
+    return render_template('/form.html', institution=institution, equipments=equipments, diagnoses=diagnoses)
 
 @app.route("/upload", methods=["POST"])
 def upload():
     uploaded_files = request.files.getlist("file[]")
-    institutionName = request.form['institution']
+    institution = ModelInstitution.getById(db, current_user.institution_id)
     operator = current_user.operator_name
     tipoEstudio = request.form['tipo-estudio']
-    tipoDiagnostico = request.form['tipo-diagnostico']
+    diagnosis = request.form['tipo-diagnostico']
     equipo = request.form['equipo']
     temp_folder= config['development'].TEMP_FOLDER
-    uploadCompleteStudy(institutionName, operator, tipoEstudio, tipoDiagnostico, equipo, uploaded_files, temp_folder)
+    uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, uploaded_files, temp_folder)
     flash("Estudio subido correctamente.")
     return redirect(url_for('form'))
 
