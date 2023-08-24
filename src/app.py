@@ -6,6 +6,7 @@ from flask_simple_captcha import CAPTCHA
 
 # Config
 from config import config
+from models.ModelStudy import ModelStudy
 
 # Models
 from models.ModelUser import ModelUser
@@ -18,7 +19,7 @@ from models.ModelDiagnosis import ModelDiagnosis
 from models.entities.User import User
 
 # Payload
-from services.DicomUploader import uploadCompleteStudy
+from services.DicomUploader import uploadCompleteStudy, verify
 
 app = Flask(__name__)
 
@@ -85,12 +86,23 @@ def upload():
     institution = ModelInstitution.getById(db, current_user.institution_id)
     operator = current_user.operator_name
     tipoEstudio = request.form['tipo-estudio']
-    diagnosis = request.form['tipo-diagnostico']
-    equipo = request.form['equipo']
+    diagnosis = ModelDiagnosis.getById(db, request.form['tipo-diagnostico'])
+    equipo = ModelEquipment.getById(db, request.form['equipo'])
     temp_folder= config['development'].TEMP_FOLDER
-    uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, uploaded_files, temp_folder)
-    flash("Estudio subido correctamente.")
-    return redirect(url_for('form'))
+    study_name = uploaded_files[0].filename.split("/")[0]
+    print(f"study name = {study_name}")
+    if (verify(db, study_name)):
+        flash(f"El estudio {study_name} ya fue cargado anteriormente.")
+        return redirect(url_for('form'))
+    else:
+        response = uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, uploaded_files, temp_folder)
+        if response:
+            ModelStudy.uploadStudy(db, study_name, current_user, equipo, diagnosis)
+            flash(f"Estudio {study_name} subido correctamente.")
+            return redirect(url_for('form'))
+        else:
+            flash("Error al subir el estudio. Intente nuevamente.")
+            return redirect(url_for('form'))
 
 # Status errors
 

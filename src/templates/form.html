@@ -48,7 +48,7 @@
             <select class="form-select" id="tipo-diagnostico" name="tipo-diagnostico" required>
               <option value="" disabled selected>Seleccione una opción</option>
               {% for d in diagnoses %}
-              <option value="{{ d }}"> {{ d.name }}</option>
+                <option value="{{ d.id }}"> {{ d.name }}</option>
               {% endfor %}
             </select>
             <div class="invalid-feedback">
@@ -60,7 +60,7 @@
             <label for="equipo" class="form-label">Equipo (Marca/Modelo)</label>
             <select class="form-select" id="equipo" name="equipo" required>
               {% for equipment in equipments %}
-              <option value="{{ equipment }}"> {{ equipment.brand  }}</option>
+                <option value="{{ equipment.id }}"> {{ equipment.brand  }}</option>
               {% endfor %}
             </select>
             <div class="invalid-feedback">

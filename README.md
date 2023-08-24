@@ -7,3 +7,7 @@
     MYSQL_PASSWORD=
     MYSQL_DB=
     SECRET_KEY=
+    TEMP_FOLDER=
+    AK=
+    HUAWEI_SERVER=
+    BUCKET_NAME=

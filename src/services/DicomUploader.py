@@ -1,3 +1,4 @@
+from models.ModelStudy import ModelStudy
 from payload.DicomLibrary import anonymize_files
 import os
 from shutil import rmtree
@@ -7,18 +8,29 @@ from obs import ObsClient
 # Config
 from config import config
 
+def verify(db, study_name):
+    ## verify if study is in Huawei
+    record = ModelStudy.getStudyByName(db, study_name)
+    if record != None:
+        return True
+    else:
+        return False
+
 def uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, uploaded_files, temp_folder):
     try:
+        response = False
         save_tmp_folders(uploaded_files, temp_folder)
         anonymize_files(temp_folder)
         upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, temp_folder)
+        response = True
     except OSError as err:
         print("OS error: ", err)
         raise
     except Exception as err:
         print("Exception: ", err)
     finally:
-        remove_tmp_folders(temp_folder)    
+        remove_tmp_folders(temp_folder)
+        return response
 
 
 def upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, folder):
@@ -40,8 +52,7 @@ def upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, folder
             objectKey = save_folder + filename
             objectKey = objectKey.replace("tmp/", "/")
             if os.path.isfile(filename):
-                resp = obsClient.putFile(bucketName=bucketName, objectKey=objectKey, file_path=filename) 
-
+                resp = obsClient.putFile(bucketName=bucketName, objectKey=objectKey, file_path=filename)
                 if resp.status < 300: 
                     print('requestId:', resp.requestId) 
                     print('uploaded Filename:', objectKey)
