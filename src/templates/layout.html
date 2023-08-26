@@ -10,12 +10,16 @@
     
     {% endblock %}
 </head>
-<body class="text-center">
-    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
-      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+<body class="text-center bg-c">
+    <header class="d-flex justify-content-around py-3 mb-4 border-bottom">
+      <a href="/" class="d-flex align-items-center">
         <img width="120" height="24" class="fs-4" src="{{ url_for('static', filename='images/logo-unnoba.png') }}"></img>
       </a>
-      <p class="d-flex align-items-center mb-3 mb-md-0"> {{ current_user.username }} </p>
+      {% if current_user != None %}
+        <p class="d-flex align-items-center mb-3 mb-md-0">
+            Usuario: {{ current_user.username }} 
+        </p>
+      {% endif %}
       <ul class="nav nav-pills">
         <li class="nav-item">
           <a href="{{ url_for('logout') }}" class="nav-link">Salir</a>

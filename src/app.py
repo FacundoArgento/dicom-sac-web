@@ -83,6 +83,7 @@ def form():
 @app.route("/upload", methods=["POST"])
 def upload():
     uploaded_files = request.files.getlist("file[]")
+    contours_files = request.files.getlist("contour-files[]")
     institution = ModelInstitution.getById(db, current_user.institution_id)
     operator = current_user.operator_name
     tipoEstudio = request.form['tipo-estudio']
@@ -90,12 +91,11 @@ def upload():
     equipo = ModelEquipment.getById(db, request.form['equipo'])
     temp_folder= config['development'].TEMP_FOLDER
     study_name = uploaded_files[0].filename.split("/")[0]
-    print(f"study name = {study_name}")
     if (verify(db, study_name)):
         flash(f"El estudio {study_name} ya fue cargado anteriormente.")
         return redirect(url_for('form'))
     else:
-        response = uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, uploaded_files, temp_folder)
+        response = uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, uploaded_files, temp_folder, contours_files, study_name)
         if response:
             ModelStudy.uploadStudy(db, study_name, current_user, equipo, diagnosis)
             flash(f"Estudio {study_name} subido correctamente.")

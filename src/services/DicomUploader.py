@@ -16,10 +16,10 @@ def verify(db, study_name):
     else:
         return False
 
-def uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, uploaded_files, temp_folder):
+def uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, uploaded_files, temp_folder, contours_files, study_name):
     try:
         response = False
-        save_tmp_folders(uploaded_files, temp_folder)
+        save_tmp_folders(uploaded_files, temp_folder, contours_files, study_name)
         anonymize_files(temp_folder)
         upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, temp_folder)
         response = True
@@ -66,14 +66,25 @@ def upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, folder
     finally:
         obsClient.close()
 
-def save_tmp_folders(uploaded_files, dest_folder):
+def save_tmp_folders(uploaded_files, dest_folder, contours, study_name):
     for file in uploaded_files:
-        file_path = os.path.join(dest_folder, file.filename)
-        dirname = os.path.dirname(file_path)
-        if not os.path.exists(dirname):
-            os.makedirs(dirname)
-        open(file_path, "a").close()
-        file.save(file_path)
+        savefiles(file, dest_folder)
+    # contours
+    if not contours or not any(f for f in contours):
+        pass
+    else:
+        study_folder = os.path.join(dest_folder, study_name)
+        for file in contours:
+            savefiles(file, study_folder)
+
+def savefiles(file, dest_folder):
+    file_path = os.path.join(dest_folder, file.filename)
+    dirname = os.path.dirname(file_path)
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
+    open(file_path, "a").close()
+    file.save(file_path)
+
 
 def remove_tmp_folders(directory_path):
     with os.scandir(directory_path) as entries:

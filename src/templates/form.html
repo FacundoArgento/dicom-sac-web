@@ -60,7 +60,7 @@
             <label for="equipo" class="form-label">Equipo (Marca/Modelo)</label>
             <select class="form-select" id="equipo" name="equipo" required>
               {% for equipment in equipments %}
-                <option value="{{ equipment.id }}"> {{ equipment.brand  }}</option>
+                <option value="{{ equipment.id }}"> {{ equipment.brand + " - " + equipment.model + " - " + equipment.potency }}</option>
               {% endfor %}
             </select>
             <div class="invalid-feedback">
@@ -68,12 +68,17 @@
             </div>
           </div>
 
-          <div class="col-12">
+          <div class="col-6">
             <label for="file[]" class="form-label">Seleccione la carpeta que contiene el Estudio Completo</label>
             <input type="file" class="form-control" id="file[]" name="file[]" webkitdirectory directory required>
             <div class="invalid-feedback">
                 Debe ingresar la carpeta con el estudio completo a subir.
             </div>
+          </div>
+
+          <div class="col-6">
+            <label for="contour-files[]" class="form-label">Archivo/carpeta extra contenedora de contornos segmentados (opcional)</label>
+            <input type="file" class="form-control" id="contour-files[]" name="contour-files[]" webkitdirectory directory>
           </div>
         </div>
       
