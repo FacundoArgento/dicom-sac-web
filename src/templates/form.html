@@ -2,88 +2,94 @@
 
 {% block title %} Formulario {% endblock %}
 
+{% block customcss %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form.css')}}" >
+{% endblock %}
+
 {% block body%}
-    <h2 class="my-4">Dicom Uploader</h2>
-    <hr class="my-4">
-    <div class="">
-      <form class="needs-validation" action="/upload" enctype="multipart/form-data" method="POST"> 
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            <br/>
-            {% for message in messages %}
-              <div class="alert alert-primary alert-dismissible" role="alert">
-                  <strong>{{ message }}</strong>
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-        <div class="row g-3">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <div class="col-sm-6">
-            <label for="institution" class="form-label">Institución</label>
-            <span class="input-group-text"> {{ institution.name  }}</span>
-          </div>
-
-          <div class="col-sm-6">
-            <label for="lastName" class="form-label">Operador</label>
-            <span class="input-group-text"> {{ current_user.operator_name  }}</span>
-          </div>
-
-          <div class="col-sm-6">
-            <label for="tipo-estudio" class="form-label">Tipo de estudio</label>
-            <select class="form-select" id="tipo-estudio" name="tipo-estudio" required>
-              <option value="" disabled selected>Seleccione una opción</option>
-              <option value="RM">RM</option>
-              <option value="RM Contraste"> RM Contraste</option>
-              <option value="Otro">Otro</option>
-            </select>
-            <div class="invalid-feedback">
-              Debe seleccionar el tipo de estudio.
+    <h1 class="my-4">Study Uploader</h1>
+    <p>Bienvenido al sistema de carga de estudios medicos. Complete el formulario a continuacion para realizar una carga.</p>
+    <form class="needs-validation" action="/upload" enctype="multipart/form-data" method="POST"> 
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <br/>
+          {% for message in messages %}
+            <div class="alert alert-primary alert-dismissible" role="alert">
+                <strong>{{ message }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-          </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      <div class="row g-3">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="col-sm-6">
+          <label for="institution" class="form-label">Institución</label>
+          <span class="input-group-text"> {{ institution.name  }}</span>
+        </div>
 
-          <div class="col-sm-6">
-            <label for="tipo-diagnostico" class="form-label">Tipo de Diagnostico</label>
-            <select class="form-select" id="tipo-diagnostico" name="tipo-diagnostico" required>
-              <option value="" disabled selected>Seleccione una opción</option>
-              {% for d in diagnoses %}
-                <option value="{{ d.id }}"> {{ d.name }}</option>
-              {% endfor %}
-            </select>
-            <div class="invalid-feedback">
-              Debe seleccionar el tipo de diagnostico sobre el estudio a subir.
-            </div>
-          </div>
+        <div class="col-sm-6">
+          <label for="lastName" class="form-label">Operador</label>
+          <span class="input-group-text"> {{ current_user.operator_name  }}</span>
+        </div>
 
-          <div class="col-sm-6">
-            <label for="equipo" class="form-label">Equipo (Marca/Modelo)</label>
-            <select class="form-select" id="equipo" name="equipo" required>
-              {% for equipment in equipments %}
-                <option value="{{ equipment.id }}"> {{ equipment.brand + " - " + equipment.model + " - " + equipment.potency }}</option>
-              {% endfor %}
-            </select>
-            <div class="invalid-feedback">
-              Debe indicar Marca/Modelo del equipo.
-            </div>
-          </div>
-
-          <div class="col-6">
-            <label for="file[]" class="form-label">Seleccione la carpeta que contiene el Estudio Completo</label>
-            <input type="file" class="form-control" id="file[]" name="file[]" webkitdirectory directory required>
-            <div class="invalid-feedback">
-                Debe ingresar la carpeta con el estudio completo a subir.
-            </div>
-          </div>
-
-          <div class="col-6">
-            <label for="contour-files[]" class="form-label">Archivo/carpeta extra contenedora de contornos segmentados (opcional)</label>
-            <input type="file" class="form-control" id="contour-files[]" name="contour-files[]" webkitdirectory directory>
+        <div class="col-sm-6">
+          <label for="tipo-estudio" class="form-label">Tipo de estudio</label>
+          <select class="form-select" id="tipo-estudio" name="tipo-estudio" required>
+            <option value="" disabled selected>Seleccione una opción...</option>
+            <option value="RM">RM</option>
+            <option value="RM Contraste"> RM Contraste</option>
+            <option value="Otro">Otro</option>
+          </select>
+          <div class="invalid-feedback">
+            Debe seleccionar el tipo de estudio.
           </div>
         </div>
-      
+
+        <div class="col-sm-6">
+          <label for="tipo-diagnostico" class="form-label">Tipo de Diagnostico</label>
+          <select class="form-select" id="tipo-diagnostico" name="tipo-diagnostico" required>
+            <option value="" disabled selected>Seleccione una opción...</option>
+            {% for d in diagnoses %}
+              <option value="{{ d.id }}"> {{ d.name }}</option>
+            {% endfor %}
+          </select>
+          <div class="invalid-feedback">
+            Debe seleccionar el tipo de diagnostico sobre el estudio a subir.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="equipo" class="form-label">Equipo (Marca/Modelo)</label>
+          <select class="form-select" id="equipo" name="equipo" required>
+            {% for equipment in equipments %}
+              <option value="{{ equipment.id }}"> {{ equipment.brand + " - " + equipment.model + " - " + equipment.potency }}</option>
+            {% endfor %}
+          </select>
+          <div class="invalid-feedback">
+            Debe indicar Marca/Modelo del equipo.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="file[]" class="form-label">Seleccione la carpeta que contiene el Estudio Completo</label>
+          <input type="file" class="form-control" id="file[]" name="file[]" webkitdirectory directory required>
+          <div class="invalid-feedback">
+              Debe ingresar la carpeta con el estudio completo a subir.
+          </div>
+        </div>
+
+        <div class="col-6">
+          <label for="contour-files[]" class="form-label">Archivo/carpeta extra contenedora de contornos segmentados (opcional)</label>
+          <input type="file" class="form-control" id="contour-files[]" name="contour-files[]" webkitdirectory directory>
+        </div>
+      </div>
+      <div class="row form-group">
         <button class="w-2 my-4 btn btn-primary btn-lg" type="submit">Subir Estudio</button>
-        <hr>
-      </form>
-    </div>
+        <span class="form-text">
+          * Tenga en cuenta que el proceso de subida de los archivos puede tardar varios minutos debido al tamaño de los estudios.<br>
+          * No cierre el navegador una vez iniciada la carga.
+        </span>
+      </div>
+    </form>
 {% endblock %}

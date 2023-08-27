@@ -23,7 +23,12 @@
   border-top-right-radius: 0;
 }
 
-.alert-custom, .btn{
+.btn{
   background-color:#6089D5;
+  color:#fff;
+}
+
+.alert-custom {
+  background-color: red;
   color:#fff;
 }
