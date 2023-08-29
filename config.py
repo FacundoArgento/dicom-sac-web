@@ -9,7 +9,7 @@ class Config:
     BUCKET_NAME = config('BUCKET_NAME')
     #CAPTCHA_CONFIG = {'SECRET_CAPTCHA_KEY': config('SECRET_CAPTCHA_KEY')}
 
-class DevelopmentConfig(Config):
+class DeployConfig(Config):
     DEBUG = config('DEBUG')
     MYSQL_HOST = config('MYSQL_HOST')
     MYSQL_USER = config('MYSQL_USER')
@@ -17,5 +17,5 @@ class DevelopmentConfig(Config):
     MYSQL_DB = config('MYSQL_DB')
 
 config = {
-    "development" : DevelopmentConfig
+    "deployConfig" : DeployConfig
 }

@@ -29,6 +29,8 @@ app = Flask(__name__)
 csrf = CSRFProtect()
 db = MySQL(app)
 login_manager_app = LoginManager(app)
+app.config.from_object(config['deployConfig'])
+csrf.init_app(app)
 
 @login_manager_app.user_loader
 def load_user(id):
@@ -116,8 +118,6 @@ def status_404(error):
 # main
 
 if __name__ == '__main__':
-    app.config.from_object(config['development'])
-    csrf.init_app(app)
     app.register_error_handler(401, status_401)
     app.register_error_handler(404, status_404)
     app.run()
