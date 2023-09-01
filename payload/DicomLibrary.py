@@ -72,9 +72,6 @@ def anonymize_files(path):
     except ValueError as e:
         print("Exception", exc_info()[0], "occurred.")
         raise ValueError("Value not found") from e
-    finally:
-        if(dicom != None):
-            dcmwrite(dataset=dicom, filename=filename)
 
     print(f"{i} files anonymized successfully.")
 

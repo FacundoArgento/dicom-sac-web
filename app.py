@@ -32,6 +32,18 @@ login_manager_app = LoginManager(app)
 app.config.from_object(config['deployConfig'])
 csrf.init_app(app)
 
+# Status errors
+@app.errorhandler(401)
+def status_401(error):
+    return redirect(url_for('login')), 401
+
+@app.errorhandler(404)
+def status_404(error):
+    return "<h1>Página no encontrada</h1>", 404
+
+app.register_error_handler(401, status_401)
+app.register_error_handler(404, status_404)
+
 @login_manager_app.user_loader
 def load_user(id):
     return ModelUser.getById(db, id)
@@ -39,7 +51,7 @@ def load_user(id):
 # Routes
 @app.route('/')
 def index():
-    if current_user != None:
+    if current_user.is_authenticated:
         return redirect(url_for('form'))
     else:
         #captcha = CAPTCHA.create()
@@ -91,7 +103,7 @@ def upload():
     tipoEstudio = request.form['tipo-estudio']
     diagnosis = ModelDiagnosis.getById(db, request.form['tipo-diagnostico'])
     equipo = ModelEquipment.getById(db, request.form['equipo'])
-    temp_folder= config['development'].TEMP_FOLDER
+    temp_folder= config['deployConfig'].TEMP_FOLDER
     study_name = uploaded_files[0].filename.split("/")[0]
     if (verify(db, study_name)):
         flash(f"El estudio {study_name} ya fue cargado anteriormente.")
@@ -106,18 +118,7 @@ def upload():
             flash("Error al subir el estudio. Intente nuevamente.")
             return redirect(url_for('form'))
 
-# Status errors
-
-def status_401(error):
-    return redirect(url_for('login'))
-
-
-def status_404(error):
-    return "<h1>Página no encontrada</h1>", 404
 
 # main
-
 if __name__ == '__main__':
-    app.register_error_handler(401, status_401)
-    app.register_error_handler(404, status_404)
     app.run()

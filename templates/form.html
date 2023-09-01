@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block body%}
-    <h1 class="my-4">Study Uploader</h1>
+    <h2 class="my-4">Alta de Estudios</h2>
     <p>Bienvenido al sistema de carga de estudios medicos. Complete el formulario a continuacion para realizar una carga.</p>
     <form class="needs-validation" action="/upload" enctype="multipart/form-data" method="POST"> 
       {% with messages = get_flashed_messages() %}

@@ -34,10 +34,10 @@ def uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, u
 
 
 def upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, folder):
-    AK = config['development'].AK
-    SK = config['development'].SK
-    server = config['development'].HUAWEI_SERVER
-    bucketName = config['development'].BUCKET_NAME
+    AK = config['deployConfig'].AK
+    SK = config['deployConfig'].SK
+    server = config['deployConfig'].HUAWEI_SERVER
+    bucketName = config['deployConfig'].BUCKET_NAME
 
     # Constructs a obs client instance with your account for accessing OBS
     obsClient = ObsClient(access_key_id=AK, secret_access_key=SK, server=server)
