@@ -8,18 +8,10 @@ from obs import ObsClient
 # Config
 from config import config
 
-def verify(db, study_name):
-    ## verify if study is in Huawei
-    record = ModelStudy.getStudyByName(db, study_name)
-    if record != None:
-        return True
-    else:
-        return False
-
-def uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, uploaded_files, temp_folder, contours_files, study_name):
+def uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, uploaded_files, temp_folder, contour_file, study_name):
     try:
         response = False
-        save_tmp_folders(uploaded_files, temp_folder, contours_files, study_name)
+        save_tmp_folders(uploaded_files, temp_folder, contour_file, study_name)
         anonymize_files(temp_folder)
         upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, temp_folder)
         response = True
@@ -66,16 +58,15 @@ def upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, folder
     finally:
         obsClient.close()
 
-def save_tmp_folders(uploaded_files, dest_folder, contours, study_name):
+def save_tmp_folders(uploaded_files, dest_folder, contour_file, study_name):
     for file in uploaded_files:
         savefiles(file, dest_folder)
-    # contours
-    if not contours or not any(f for f in contours):
+    # contour
+    if not contour_file:
         pass
     else:
         study_folder = os.path.join(dest_folder, study_name)
-        for file in contours:
-            savefiles(file, study_folder)
+        savefiles(contour_file, study_folder)
 
 def savefiles(file, dest_folder):
     file_path = os.path.join(dest_folder, file.filename)

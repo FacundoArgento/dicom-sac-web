@@ -3,6 +3,7 @@ from flask_mysqldb import MySQL
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_simple_captcha import CAPTCHA
+from datetime import datetime
 
 # Config
 from config import config
@@ -19,7 +20,7 @@ from models.ModelDiagnosis import ModelDiagnosis
 from models.entities.User import User
 
 # Payload
-from services.DicomUploader import uploadCompleteStudy, verify
+from services.DicomUploader import uploadCompleteStudy
 
 app = Flask(__name__)
 
@@ -97,26 +98,22 @@ def form():
 @app.route("/upload", methods=["POST"])
 def upload():
     uploaded_files = request.files.getlist("file[]")
-    contours_files = request.files.getlist("contour-files[]")
+    contour_file = request.files['contour-file']
     institution = ModelInstitution.getById(db, current_user.institution_id)
     operator = current_user.operator_name
     tipoEstudio = request.form['tipo-estudio']
     diagnosis = ModelDiagnosis.getById(db, request.form['tipo-diagnostico'])
     equipo = ModelEquipment.getById(db, request.form['equipo'])
     temp_folder= config['deployConfig'].TEMP_FOLDER
-    study_name = uploaded_files[0].filename.split("/")[0]
-    if (verify(db, study_name)):
-        flash(f"El estudio {study_name} ya fue cargado anteriormente.")
+    study_name = "{0}-{1} {2}-{3}-{date:%Y-%m-%d_%H:%M:%S}".format(institution.name, equipo.model, equipo.potency, diagnosis.name, date=datetime.now()) 
+    response = uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, uploaded_files, temp_folder, contour_file, study_name)
+    if response:
+        ModelStudy.uploadStudy(db, study_name, current_user, equipo, diagnosis)
+        flash(f"Estudio subido correctamente. Nombre indicado: {study_name}")
         return redirect(url_for('form'))
     else:
-        response = uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, uploaded_files, temp_folder, contours_files, study_name)
-        if response:
-            ModelStudy.uploadStudy(db, study_name, current_user, equipo, diagnosis)
-            flash(f"Estudio {study_name} subido correctamente.")
-            return redirect(url_for('form'))
-        else:
-            flash("Error al subir el estudio. Intente nuevamente.")
-            return redirect(url_for('form'))
+        flash("Error al subir el estudio. Intente nuevamente.")
+        return redirect(url_for('form'))
 
 
 # main
