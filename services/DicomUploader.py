@@ -11,9 +11,9 @@ from config import config
 def uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, uploaded_files, temp_folder, contour_file, study_name):
     try:
         response = False
-        save_tmp_folders(uploaded_files, temp_folder, contour_file, study_name)
-        anonymize_files(temp_folder)
         actual_study_name = uploaded_files[0].filename.split("/")[0]
+        save_tmp_folders(uploaded_files, temp_folder, contour_file, actual_study_name)
+        anonymize_files(temp_folder)
         renameStudyTmpFolder(temp_folder, actual_study_name, study_name)
         upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, temp_folder)
         response = True
@@ -35,7 +35,7 @@ def upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, folder
 
     # Constructs a obs client instance with your account for accessing OBS
     obsClient = ObsClient(access_key_id=AK, secret_access_key=SK, server=server)
-    
+    metadata={'institution':institution, 'operador':operator, 'tipoStudio':tipoEstudio, 'diagnostico':diagnosis, 'equipo':equipo}
     folderpath = folder
     recursive_path = folderpath + "/**"
 
@@ -45,7 +45,6 @@ def upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, folder
         for filename in iglob(recursive_path, recursive=True):
             objectKey = save_folder + filename
             objectKey = objectKey.replace("tmp/", "/")
-            metadata={'institution':institution, 'operador':operator, 'tipoStudio':tipoEstudio, 'diagnostico':diagnosis, 'equipo':equipo}
             if os.path.isfile(filename):
                 resp = obsClient.putFile(bucketName=bucketName, objectKey=objectKey, file_path=filename, metadata=metadata)
                 if resp.status < 300: 
