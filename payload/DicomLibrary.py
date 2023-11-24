@@ -18,7 +18,7 @@ def anonymize_files(path):
 
     :param path: Path (string) where data are stored.
     """
-
+    print("Starting to anonymize files.")
     recursive_path= path + "/**"
     i=0
     try:

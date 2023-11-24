@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_mysqldb import MySQL
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
@@ -14,16 +14,15 @@ from models.ModelUser import ModelUser
 from models.ModelInstitution import ModelInstitution
 from models.ModelEquipment import ModelEquipment
 from models.ModelDiagnosis import ModelDiagnosis
-#from models.ModelStudy import ModelStudy
 
 # Entities
 from models.entities.User import User
 
 # Payload
-from services.DicomUploader import uploadCompleteStudy
+from services.DicomUploader import uploadCompleteStudy, save_tmp_folders
 
 app = Flask(__name__)
-
+app.config['MAX_CONTENT_LENGTH'] =  512 * 1024 * 1024 # 500 MB
 #CAPTCHA = CAPTCHA(config=config['development'].CAPTCHA_CONFIG)
 #app = CAPTCHA.init_app(app)
 
@@ -97,7 +96,6 @@ def form():
 
 @app.route("/upload", methods=["POST"])
 def upload():
-    uploaded_files = request.files.getlist("file[]")
     contour_file = request.files['contour-file']
     institution = ModelInstitution.getById(db, current_user.institution_id)
     operator = current_user.operator_name
@@ -105,8 +103,8 @@ def upload():
     diagnosis = ModelDiagnosis.getById(db, request.form['tipo-diagnostico'])
     equipo = ModelEquipment.getById(db, request.form['equipo'])
     temp_folder= config['deployConfig'].TEMP_FOLDER
-    study_name = "{0}-{1} {2}-{3}-{date:%Y-%m-%d_%H:%M:%S}".format(institution.name, equipo.model, equipo.potency, diagnosis.name, date=datetime.now()) 
-    response = uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, uploaded_files, temp_folder, contour_file, study_name)
+    study_name = "{0}-{1} {2}-{3}-{date:%Y-%m-%d_%H:%M:%S}".format(institution.name, equipo.model, equipo.potency, diagnosis.name, date=datetime.now())
+    response = uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, temp_folder, contour_file, study_name)
     if response:
         ModelStudy.uploadStudy(db, study_name, current_user, equipo, diagnosis)
         flash(f"Estudio subido correctamente. Nombre indicado: {study_name}")
@@ -115,6 +113,18 @@ def upload():
         flash("Error al subir el estudio. Intente nuevamente.")
         return redirect(url_for('form'))
 
+@app.route("/save-tmp-files", methods=["POST"])
+def save_tmp():
+    try:
+        if 'files[]' not in request.files:
+            return jsonify({'error': 'No se proporcionaron archivos'}), 400
+        files = request.files.getlist("files[]")
+        temp_folder = config['deployConfig'].TEMP_FOLDER
+        save_tmp_folders(files, temp_folder)
+        return jsonify({'message': 'Archivo guardado exitosamente'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 
 # main
 if __name__ == '__main__':
