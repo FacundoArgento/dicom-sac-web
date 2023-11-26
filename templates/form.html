@@ -4,13 +4,12 @@
 
 {% block customcss %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css')}}" >
-<script src="../static/js/util.js"></script>
 {% endblock %}
 
 {% block body%}
     <h2 class="my-4">Alta de Estudios</h2>
     <p>Bienvenido al sistema de carga de estudios medicos. Complete el formulario a continuacion para realizar una carga.</p>
-    <form class="needs-validation" action="/upload" enctype="multipart/form-data" method="POST"> 
+    <form id="form" class="needs-validation" action="/upload" enctype="multipart/form-data" method="POST"> 
       {% with messages = get_flashed_messages() %}
         {% if messages %}
           <br/>
@@ -86,11 +85,13 @@
         </div>
       </div>
       <div class="row form-group">
-        <input class="w-2 my-4 btn btn-primary btn-lg" type="submit"/>
+        <input class="w-2 my-4 btn btn-primary btn-lg" id="submit-btn" type="submit" onsubmit="submit();" disabled/>
+        <div id="envio" class="loading-div"></div>
         <span class="form-text">
           * Tenga en cuenta que el proceso de subida de los archivos puede tardar varios minutos debido al tamaño de los estudios.<br>
           * No cierre el navegador una vez iniciada la carga.
         </span>
       </div>
     </form>
+    <script src="../static/js/util.js"></script>
 {% endblock %}

@@ -4,6 +4,7 @@ from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_simple_captcha import CAPTCHA
 from datetime import datetime
+from os import listdir
 
 # Config
 from config import config
@@ -19,7 +20,7 @@ from models.ModelDiagnosis import ModelDiagnosis
 from models.entities.User import User
 
 # Payload
-from services.DicomUploader import uploadCompleteStudy, save_tmp_folders
+from services.DicomUploader import uploadCompleteStudy, save_tmp_folders, remove_tmp_folders
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] =  512 * 1024 * 1024 # 500 MB
@@ -92,6 +93,9 @@ def form():
     institution = ModelInstitution.getById(db, current_user.institution_id)
     equipments = ModelEquipment.getAllByInstitutionId(db, institution.id)
     diagnoses = ModelDiagnosis.getAllDiagnosis(db)
+    if listdir(config['deployConfig'].TEMP_FOLDER): 
+            print("borrando archivos...")
+            remove_tmp_folders(config['deployConfig'].TEMP_FOLDER)
     return render_template('/form.html', institution=institution, equipments=equipments, diagnoses=diagnoses)
 
 @app.route("/upload", methods=["POST"])
@@ -116,10 +120,13 @@ def upload():
 @app.route("/save-tmp-files", methods=["POST"])
 def save_tmp():
     try:
+        temp_folder = config['deployConfig'].TEMP_FOLDER
+        if listdir(temp_folder): 
+            print("borrando archivos previos...")
+            remove_tmp_folders(config['deployConfig'].TEMP_FOLDER)
         if 'files[]' not in request.files:
             return jsonify({'error': 'No se proporcionaron archivos'}), 400
         files = request.files.getlist("files[]")
-        temp_folder = config['deployConfig'].TEMP_FOLDER
         save_tmp_folders(files, temp_folder)
         return jsonify({'message': 'Archivo guardado exitosamente'}), 200
     except Exception as e:

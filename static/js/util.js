@@ -15,6 +15,7 @@ function saveFiles(elem) {
             }
         }
         makeRequest(formData, csrfToken);
+        document.getElementById("submit-btn").disabled = false;
     } else {
         alert('El navegador no admite la propiedad "webkitdirectory".');
     }
@@ -31,4 +32,12 @@ function makeRequest(formData, csrfToken) {
         .catch(error => {
             console.error('Error al enviar el archivo:', error);
         });
+}
+
+let form = document.getElementById("form");
+
+form.onsubmit = function(){
+    document.getElementById("submit-btn").style.display = 'none';
+    document.getElementById("envio").innerHTML ="<img src='static/images/loading.gif' width='100' height='100'> Subiendo Estudio... Esto puede tardar varios minutos.</img>";
+    return true;
 }
