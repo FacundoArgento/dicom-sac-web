@@ -9,25 +9,27 @@ function saveFiles(elem) {
             // Aquí puedes realizar la lógica para guardar el archivo
             formData.append('files[]', file);
             if (counter == 250) {
-                makeRequest(formData, csrfToken);
+                makeRequest(formData, csrfToken, false);
                 counter = 0;
                 formData = new FormData();
             }
         }
-        makeRequest(formData, csrfToken);
-        document.getElementById("submit-btn").disabled = false;
+        makeRequest(formData, csrfToken, true);
     } else {
         alert('El navegador no admite la propiedad "webkitdirectory".');
     }
 }
 
-function makeRequest(formData, csrfToken) {
+function makeRequest(formData, csrfToken, final) {
     fetch('/save-tmp-files', {method: "POST", body: formData, headers: {
         'X-CSRFToken': csrfToken,
     }})
         .then(response => response.json())
         .then(data => {
             console.log('Respuesta del servidor:', data);
+            if (final) {
+                document.getElementById("submit-btn").disabled = false;
+            }
         })
         .catch(error => {
             console.error('Error al enviar el archivo:', error);

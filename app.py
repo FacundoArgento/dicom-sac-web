@@ -121,9 +121,6 @@ def upload():
 def save_tmp():
     try:
         temp_folder = config['deployConfig'].TEMP_FOLDER
-        if listdir(temp_folder): 
-            print("borrando archivos previos...")
-            remove_tmp_folders(config['deployConfig'].TEMP_FOLDER)
         if 'files[]' not in request.files:
             return jsonify({'error': 'No se proporcionaron archivos'}), 400
         files = request.files.getlist("files[]")
