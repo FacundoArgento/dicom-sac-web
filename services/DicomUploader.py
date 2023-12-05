@@ -89,4 +89,5 @@ def remove_tmp_folders(directory_path):
     print("All files deleted successfully.")
 
 def renameStudyTmpFolder(temp_folder, actual_study_name, studyName):
-    os.rename(temp_folder + "/" + actual_study_name, temp_folder + "/" + studyName)
+    encoded_name = studyName.encode('ascii', 'ignore').decode('ascii')
+    os.rename(temp_folder + "/" + actual_study_name, temp_folder + "/" + encoded_name)

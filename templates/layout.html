@@ -11,14 +11,20 @@
     {% endblock %}
 </head>
 <body>
-    <header class="d-flex justify-content-between py-3 mb-4 border-bottom w-75 m-auto">
-      <a href="/" class="d-flex align-items-center">
+    <header class="d-flex py-3 mb-4 border-bottom w-75 m-auto">
+      <a href="/" class="d-flex align-items-center px-3">
         <img width="120" height="24" class="fs-4" src="{{ url_for('static', filename='images/logo-unnoba.png') }}"></img>
       </a>
-      <ul class="nav nav-pills">
+      <a href="https://itt.unnoba.edu.ar/" target="_blank" class="d-flex align-items-center px-3">
+        <img class="fs-4" src="{{ url_for('static', filename='images/logo-itt.png') }}"></img>
+      </a>
+      <a href="https://www.sac.org.ar/" target="_blank" class="d-flex align-items-center px-3">
+        <img width="50%" class="fs-4" src="{{ url_for('static', filename='images/logo-sac.png') }}"></img>
+      </a>
+      <ul class="nav nav-pills" style="position: absolute; right: 12.5%;">
         <li class="nav-item">
           {% if current_user.is_authenticated: %}
-          <a href="{{ url_for('logout') }}" class="nav-link">Salir</a>
+          <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
           {% endif %}
         </li>
       </ul>
