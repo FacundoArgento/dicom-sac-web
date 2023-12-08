@@ -23,14 +23,19 @@
       {% endwith %}
       <div class="row g-3">
         <input type="hidden" id="csrf_token" name="csrf_token" value="{{ csrf_token() }}">
-        <div class="col-sm-6">
-          <label class="form-label">Institución</label>
-          <span class="input-group-text"> {{ institution.name  }}</span>
-        </div>
-
+        
         <div class="col-sm-6">
           <label class="form-label">Operador</label>
           <span class="input-group-text"> {{ current_user.operator_name  }}</span>
+        </div>
+
+        <div class="col-sm-6">
+          <label class="form-label">Institución</label>
+          <select class="form-select" id="institution" name="institution" onchange="" required>
+            {% for i in institutions %}
+              <option value="{{ i.id }}"> {{ i.name }}</option>
+            {% endfor %}
+          </select>
         </div>
 
         <div class="col-sm-6">
@@ -47,7 +52,7 @@
         </div>
 
         <div class="col-sm-6">
-          <label for="tipo-diagnostico" class="form-label">Tipo de Diagnostico</label>
+          <label for="tipo-diagnostico" class="form-label">Diagnostico Principal</label>
           <select class="form-select" id="tipo-diagnostico" name="tipo-diagnostico" required>
             <option value="" disabled selected>Seleccione una opción...</option>
             {% for d in diagnoses %}

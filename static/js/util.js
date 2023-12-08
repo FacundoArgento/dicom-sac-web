@@ -43,3 +43,35 @@ form.onsubmit = function(){
     document.getElementById("envio").innerHTML ="<img src='static/images/loading.gif' width='100' height='100'> Subiendo Estudio... Esto puede tardar varios minutos.</img>";
     return true;
 }
+
+var institution = document.getElementById('institution');
+var equipment = document.getElementById('equipo');
+const csrfToken = document.getElementById('csrf_token').value;
+institution.addEventListener('change', function () {
+    var institution_id = institution.value;
+
+    // Realizar una solicitud Fetch para obtener los datos para el segundo select
+    fetch('/get_equipments', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken,
+        },
+        body: 'institution_id=' + institution_id
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Limpiar las opciones existentes en el segundo select
+        while (equipment.firstChild) {
+            equipment.removeChild(equipment.firstChild);
+        }
+        // Llenar el segundo select con los nuevos datos
+        data.forEach(function (value) {
+            var option = document.createElement('option');
+            option.value = value.id;
+            option.text = value.brand + ' - ' + value.model + ' - ' + value.potency;
+            equipment.appendChild(option);
+        });
+    })
+    .catch(error => console.error('Error:', error));
+});

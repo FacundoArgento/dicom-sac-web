@@ -31,3 +31,18 @@ class ModelInstitution():
                 return None
         except Exception as ex:
             raise Exception(ex)
+        
+    @classmethod
+    def getAllByUserId(self, db, user_id):
+        try:
+            cursor = db.connection.cursor()
+            sql = "SELECT institution_id FROM user_institutions WHERE user_id = {}".format(user_id)
+            cursor.execute(sql)
+            records = cursor.fetchall()
+            institutions = []
+            for row in records:
+                institution = self.getById(db, row[0])
+                institutions.append(institution)
+            return institutions
+        except Exception as ex:
+            raise Exception(ex)

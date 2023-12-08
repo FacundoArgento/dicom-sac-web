@@ -90,18 +90,18 @@ def logout():
 @app.route('/form', methods = ['GET'])
 @login_required
 def form():
-    institution = ModelInstitution.getById(db, current_user.institution_id)
-    equipments = ModelEquipment.getAllByInstitutionId(db, institution.id)
+    institutions = ModelInstitution.getAllByUserId(db, current_user.id)
+    equipments = ModelEquipment.getAllByInstitutionId(db, institutions[0].id)
     diagnoses = ModelDiagnosis.getAllDiagnosis(db)
     if listdir(config['deployConfig'].TEMP_FOLDER): 
             print("borrando archivos...")
             remove_tmp_folders(config['deployConfig'].TEMP_FOLDER)
-    return render_template('/form.html', institution=institution, equipments=equipments, diagnoses=diagnoses)
+    return render_template('/form.html', institutions=institutions, equipments=equipments, diagnoses=diagnoses)
 
 @app.route("/upload", methods=["POST"])
 def upload():
     contour_file = request.files['contour-file']
-    institution = ModelInstitution.getById(db, current_user.institution_id)
+    institution = ModelInstitution.getById(db, request.form['institution'])
     operator = current_user.operator_name
     tipoEstudio = request.form['tipo-estudio']
     diagnosis = ModelDiagnosis.getById(db, request.form['tipo-diagnostico'])
@@ -129,6 +129,14 @@ def save_tmp():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+@app.route('/get_equipments', methods=['POST'])
+def get_data_options2():
+    institution_id = request.form['institution_id']
+    equipments = ModelEquipment.getAllByInstitutionId(db, institution_id)
+    lista = []
+    for eq in equipments:
+        lista.append({'id': eq.id, 'brand': eq.brand, 'model': eq.model, 'potency': eq.potency})
+    return jsonify(lista)
 
 # main
 if __name__ == '__main__':

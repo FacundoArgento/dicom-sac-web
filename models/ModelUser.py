@@ -23,11 +23,11 @@ class ModelUser():
     def getById(self, db, id):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT id, username, active, operator_name, institution_id FROM user WHERE id = {}".format(id)
+            sql = "SELECT id, username, active, operator_name FROM user WHERE id = {}".format(id)
             cursor.execute(sql)
             row = cursor.fetchone()
             if row != None:
-                return User(row[0], row[1], None, row[2], row[3], row[4])
+                return User(row[0], row[1], None, row[2], row[3])
             else:
                 return None
         except Exception as ex:
