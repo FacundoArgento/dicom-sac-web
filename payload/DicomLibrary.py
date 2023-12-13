@@ -2,7 +2,7 @@ import os
 from sys import exc_info
 import numpy as np
 from scipy.io import loadmat
-from pydicom import dcmread, dcmwrite 
+from pydicom import dcmread, dcmwrite, misc
 from PIL import Image
 from tqdm import tqdm
 from glob import iglob
@@ -23,49 +23,50 @@ def anonymize_files(path):
     i=0
     try:
         for filename in iglob(recursive_path, recursive=True):
-            if(filename.endswith(".dcm")):
-                dicom = dcmread(filename)
+            if os.path.isfile(filename):
+                if(misc.is_dicom(filename)):
+                    dicom = dcmread(filename)
 
-                dicom.AcquisitionDate=""
-                dicom.AccessionNumber=""
-                dicom.AdditionalPatientHistory=""
-                    
-                dicom.ContentDate=""
-                dicom.ContentTime=""
-                dicom.PatientName=""
-                dicom.PatientID=""
-                dicom.PatientBirthDate=""
+                    dicom.AcquisitionDate=""
+                    dicom.AccessionNumber=""
+                    dicom.AdditionalPatientHistory=""
 
-                dicom.InstitutionName=""
-                dicom.InstitutionAddress=""
-                dicom.InstitutionalDepartmentName=""
+                    dicom.ContentDate=""
+                    dicom.ContentTime=""
+                    dicom.PatientName=""
+                    dicom.PatientID=""
+                    dicom.PatientBirthDate=""
 
-                dicom.StudyID=""
-                dicom.StationName=""
-                dicom.StudyDate=""
-                dicom.SeriesDate=""
-                # Requested Procedure ID & Scheduled Procedure Step Id
-                # dicom.RequestAttributesSequence._list[0].ScheduledProcedureStepID=""
-                # dicom.RequestAttributesSequence._list[0].RequestedProcedureID=""
-                dicom.RequestAttributesSequence=[]
+                    dicom.InstitutionName=""
+                    dicom.InstitutionAddress=""
+                    dicom.InstitutionalDepartmentName=""
 
-                dicom.PerformedProcedureStepStartDate=""
-                dicom.PerformedProcedureStepID=""
-                dicom.InstanceCreationDate=""
-                dicom.InstanceCreationTime=""
+                    dicom.StudyID=""
+                    dicom.StationName=""
+                    dicom.StudyDate=""
+                    dicom.SeriesDate=""
+                    # Requested Procedure ID & Scheduled Procedure Step Id
+                    # dicom.RequestAttributesSequence._list[0].ScheduledProcedureStepID=""
+                    # dicom.RequestAttributesSequence._list[0].RequestedProcedureID=""
+                    dicom.RequestAttributesSequence=[]
 
-                dicom.OtherPatientsIDs=""
-                dicom.OperatorsName=""
-                dicom.PerformingPhysicianName=""
-                dicom.PhysiciansOfRecord=""
-                dicom.ReferringPhysicianName=""
-                dicom.RequestingPhysician=""
+                    dicom.PerformedProcedureStepStartDate=""
+                    dicom.PerformedProcedureStepID=""
+                    dicom.InstanceCreationDate=""
+                    dicom.InstanceCreationTime=""
 
-                dcmwrite(dataset=dicom, filename=filename)
+                    dicom.OtherPatientsIDs=""
+                    dicom.OperatorsName=""
+                    dicom.PerformingPhysicianName=""
+                    dicom.PhysiciansOfRecord=""
+                    dicom.ReferringPhysicianName=""
+                    dicom.RequestingPhysician=""
 
-                i+=1
-            else:
-                continue
+                    dcmwrite(dataset=dicom, filename=filename)
+
+                    i+=1
+                else:
+                    continue
     except FileNotFoundError as e:
         print("Exception", exc_info()[0], "occurred.")
         raise FileNotFoundError("File not found.") from e
