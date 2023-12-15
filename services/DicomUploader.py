@@ -65,6 +65,7 @@ def save_contour(dest_folder, contour_file, study_name):
     else:
         study_folder = os.path.join(dest_folder, study_name)
         savefiles(contour_file, study_folder)
+        renameContoursFile(contour_file, study_folder)
 
 def save_tmp_folders(uploaded_files, dest_folder):
     for file in uploaded_files:
@@ -91,3 +92,10 @@ def remove_tmp_folders(directory_path):
 def renameStudyTmpFolder(temp_folder, actual_study_name, studyName):
     encoded_name = studyName.encode('ascii', 'ignore').decode('ascii')
     os.rename(temp_folder + "/" + actual_study_name, temp_folder + "/" + encoded_name)
+
+def renameContoursFile(file, dest_folder):
+    contour_path = os.path.join(dest_folder, file.filename)
+    if os.path.isdir(contour_path):
+        return
+    file_extension = os.path.splitext(file.filename)[1]
+    os.rename(contour_path, os.path.join(dest_folder, "contours" + file_extension))
