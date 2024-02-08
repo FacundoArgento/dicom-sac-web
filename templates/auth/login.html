@@ -9,6 +9,7 @@
 
 {% block body%}
   <h1 style="text-align: center;">D A R M I C</h1>
+  <h4 style="text-align: center;">Dataset Argentino de Imágenes de Resonancia Magnética Cardiológica</h4>
   <hr>
   <form class="form-signin" action="/login" method="POST">
     {% with messages = get_flashed_messages() %}
@@ -22,7 +23,7 @@
         {% endfor %}
       {% endif %}
     {% endwith %}  
-    <h3 class="h3 mb-3 fw-normal">Autenticación</h3>
+    <h3 class="h3 mb-3 fw-normal text-center">Autenticación</h3>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="form-floating">
       <input type="text" class="form-control" id="username" name="username" placeholder="Username">
