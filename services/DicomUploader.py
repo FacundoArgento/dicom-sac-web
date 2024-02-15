@@ -14,7 +14,7 @@ def uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, t
         actual_study_name = os.listdir(temp_folder)[0]
         save_contour(temp_folder, contour_file, actual_study_name)
         anonymize_files(temp_folder)
-        renameStudyTmpFolder(temp_folder, actual_study_name, study_name)
+        encoded_study_name = renameStudyTmpFolder(temp_folder, actual_study_name, study_name)
         upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, temp_folder)
         response = True
     except OSError as err:
@@ -23,7 +23,7 @@ def uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, t
     except Exception as err:
         print("Exception: ", err)
     finally:
-        remove_tmp_folders(temp_folder)
+        remove_tmp_folders(temp_folder, encoded_study_name)
         return response
 
 
@@ -40,7 +40,7 @@ def upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, folder
     recursive_path = folderpath + "/**"
 
     save_folder = institution.name
-    
+    i=0
     try: 
         for filename in iglob(recursive_path, recursive=True):
             objectKey = save_folder + filename
@@ -53,10 +53,12 @@ def upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, folder
                     print('errorCode:', resp.errorCode) 
                     print('errorMessage:', resp.errorMessage)
                     break
+            i+=1
     except:
         import traceback
         print(traceback.format_exc())
     finally:
+        print(f"cantidad de archivos subidos: {i}")
         obsClient.close()
 
 def save_contour(dest_folder, contour_file, study_name):
@@ -80,18 +82,21 @@ def savefiles(file, dest_folder):
     file.save(file_path)
 
 
-def remove_tmp_folders(directory_path):
-    with os.scandir(directory_path) as entries:
+def remove_tmp_folders(directory_path, encoded_study_name):
+    path = directory_path + "/" + encoded_study_name
+    with os.scandir(path) as entries:
        for entry in entries:
          if entry.is_file():
             os.unlink(entry.path)
          else:
             rmtree(entry.path)
+    os.rmdir(path)  # finnaly remove dir.
     print("All files deleted successfully.")
 
 def renameStudyTmpFolder(temp_folder, actual_study_name, studyName):
     encoded_name = studyName.encode('ascii', 'ignore').decode('ascii')
     os.rename(temp_folder + "/" + actual_study_name, temp_folder + "/" + encoded_name)
+    return encoded_name
 
 def renameContoursFile(file, dest_folder):
     contour_path = os.path.join(dest_folder, file.filename)

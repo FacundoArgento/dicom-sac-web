@@ -93,9 +93,6 @@ def form():
     institutions = ModelInstitution.getAllByUserId(db, current_user.id)
     equipments = ModelEquipment.getAllByInstitutionId(db, institutions[0].id)
     diagnoses = ModelDiagnosis.getAllDiagnosis(db)
-    if listdir(config['deployConfig'].TEMP_FOLDER): 
-            print("borrando archivos...")
-            remove_tmp_folders(config['deployConfig'].TEMP_FOLDER)
     return render_template('/form.html', institutions=institutions, equipments=equipments, diagnoses=diagnoses)
 
 @app.route("/upload", methods=["POST"])
