@@ -20,7 +20,7 @@ from models.ModelDiagnosis import ModelDiagnosis
 from models.entities.User import User
 
 # Payload
-from services.DicomUploader import uploadCompleteStudy, save_tmp_folders, remove_tmp_folders
+from services.DicomUploader import uploadCompleteStudy, save_tmp_folders
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] =  512 * 1024 * 1024 # 500 MB

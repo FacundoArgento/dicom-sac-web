@@ -11,11 +11,11 @@ from config import config
 def uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, temp_folder, contour_file, study_name):
     try:
         response = False
-        actual_study_name = os.listdir(temp_folder)[0]
+        actual_study_name = get_study_name(temp_folder)
         save_contour(temp_folder, contour_file, actual_study_name)
-        anonymize_files(temp_folder)
+        anonymize_files(os.path.join(temp_folder, actual_study_name))
         encoded_study_name = renameStudyTmpFolder(temp_folder, actual_study_name, study_name)
-        upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, temp_folder)
+        upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, os.path.join(temp_folder, encoded_study_name))
         response = True
     except OSError as err:
         print("OS error: ", err)
@@ -104,3 +104,8 @@ def renameContoursFile(file, dest_folder):
         return
     file_extension = os.path.splitext(file.filename)[1]
     os.rename(contour_path, os.path.join(dest_folder, "contours" + file_extension))
+
+def get_study_name(path):
+    carpetas = [carpeta for carpeta in iglob(os.path.join(path, '*')) if os.path.isdir(carpeta)]
+    carpetas_ordenadas = sorted(carpetas, key=lambda carpeta: os.path.getctime(carpeta), reverse=True)
+    return os.path.basename(carpetas_ordenadas[0])
