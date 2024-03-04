@@ -8,7 +8,7 @@ class ModelDiagnosis():
     def getAllDiagnosis(self, db):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT * FROM diagnosis"
+            sql = "SELECT * FROM diagnosis ORDER BY name"
             cursor.execute(sql)
             records = cursor.fetchall()
             all_diagnosis = []

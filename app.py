@@ -104,7 +104,7 @@ def upload():
     diagnosis = ModelDiagnosis.getById(db, request.form['tipo-diagnostico'])
     equipo = ModelEquipment.getById(db, request.form['equipo'])
     temp_folder= config['deployConfig'].TEMP_FOLDER
-    study_name = "{0}-{1} {2}-{3}-{date:%Y-%m-%d_%H:%M:%S}".format(institution.name, equipo.model, equipo.potency, diagnosis.name, date=datetime.now())
+    study_name = "{0}-{1} {2}-{3}-{4}-{date:%Y-%m-%d_%H:%M:%S}".format(institution.name, equipo.model, equipo.potency, tipoEstudio, diagnosis.name, date=datetime.now())
     response = uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, temp_folder, contour_file, study_name)
     if response:
         ModelStudy.uploadStudy(db, study_name, current_user, equipo, diagnosis)
