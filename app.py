@@ -86,6 +86,12 @@ def logout():
     #captcha = CAPTCHA.create()
     return redirect(url_for('login'))
 
+@app.route('/admin', methods = ['GET'])
+def admin():
+    if current_user.is_authenticated and current_user.admin:
+        return render_template('admin/admin.html')
+    else:
+        return redirect(url_for('form'))
 
 @app.route('/form', methods = ['GET'])
 @login_required
