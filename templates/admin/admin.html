@@ -4,4 +4,40 @@
 
 {% block body%}
 <h2 class="my-4 text-center">Admin Page</h2>
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <br/>
+        {% for message in messages %}
+        <div class="alert alert-primary alert-dismissible" role="alert">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+<table border="1">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descargar Contornos</th>
+            <th>Re-subir Contornos</th>
+            <th>Habilitar Subida</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for study in studys %}
+            <tr>
+                <td>{{ study.id }}</td>
+                <td>{{ study.name }}</td>
+                <td>
+                    <a href="{{ url_for('download_contours', study_name=study.name) }}" class="btn btn-primary">Descargar Contorno</a>
+                </td>
+                <td>Subir</td>
+                <td>Habilitar</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
+
