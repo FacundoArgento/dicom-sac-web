@@ -48,3 +48,19 @@ class ModelStudy():
             return studys
         except Exception as ex:
             raise Exception(ex)
+
+
+    @classmethod
+    def enableStudyContoursById(self, db, id):
+        try:
+            cursor = db.connection.cursor()
+            sql = """
+                UPDATE study
+                SET contours_verified = 1
+                WHERE id={}
+            """.format(id)
+            cursor.execute(sql)
+            db.connection.commit()
+            cursor.close()
+        except Exception as ex:
+            raise Exception(ex)

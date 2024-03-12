@@ -104,6 +104,26 @@ def download_contours(study_name):
         flash(f"El estudio {study_name} no posee un archivo de contornos .mat.")
         return redirect(url_for('admin'))
 
+@app.route('/upload-contours/<study_name>', methods=['POST'])
+def upload_contours(study_name):
+    uploaded_file = request.files['file']
+    if uploaded_file:
+        file_path = f"{config['deployConfig'].TEMP_FOLDER}/{study_name}/contours.mat"
+        uploaded_file.save(file_path)
+        flash(f"Se actualizaron los contornos del estudio: {study_name}")
+    else:
+        flash(f"El estudio {study_name} no posee un archivo de contornos .mat")
+    return redirect(url_for('admin'))
+
+@app.route('/enable_contours/<study_id>', methods=['POST'])
+def enable_contours(study_id):
+    if current_user.is_authenticated and current_user.admin:
+        ModelStudy.enableStudyContoursById(db, study_id)
+        flash(f"Se habilitaron los contornos para la subida del estudio con ID: {study_id}")
+        return redirect(url_for('admin'))
+
+
+
 @app.route('/form', methods = ['GET'])
 @login_required
 def form():
