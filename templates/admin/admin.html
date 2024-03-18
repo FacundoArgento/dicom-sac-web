@@ -26,7 +26,23 @@
                     {% endfor %}
                 {% endif %}
             {% endwith %}
-
+            <section>
+                Observaciones:
+                <ul>
+                    <li>
+                        Si al descargar los contornos el estudio no contiene el archivo MatLAB, puede ser ya que contenga los contornis dentro de la estructura DICOM.
+                    </li>
+                    <li>
+                        Para corregir los contornos de un estudio se debe subir el archivo en la columna <b>Re-subir Contornos</b> para lo cual se habilitará el boton actualizar.
+                    </li>
+                    <li>
+                        Los estudios que aparecen en la tabla son los que no tienen 'habilitados' los contornos logicamente.
+                    </li>
+                    <li>
+                        Para indicar que el estudio tiene los contornos correctos, se debe apretar el boton <b>Habilitar</b>, el cual preguntará si esta seguro para evitar errores.
+                    </li>
+                </ul>
+            </section>
             <table border="1" class="table table-striped">
                 <thead class="text-center">
                     <tr>

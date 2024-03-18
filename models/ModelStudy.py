@@ -38,6 +38,7 @@ class ModelStudy():
                 SELECT *
                 FROM study
                 WHERE contours_verified = 0
+                ORDER BY id DESC
                 """
             cursor.execute(sql)
             records = cursor.fetchall()
