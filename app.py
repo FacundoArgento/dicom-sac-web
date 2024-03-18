@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_file, abort
 from flask_mysqldb import MySQL
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_simple_captcha import CAPTCHA
 from datetime import datetime
-from os import listdir
+from os import path
 
 # Config
 from config import config
@@ -85,6 +85,43 @@ def logout():
     logout_user()
     #captcha = CAPTCHA.create()
     return redirect(url_for('login'))
+
+@app.route('/admin', methods = ['GET'])
+@login_required
+def admin():
+    if current_user.is_authenticated and current_user.admin:
+        studys = ModelStudy.getAllStudyForRevision(db)
+        return render_template('admin/admin.html', studys = studys)
+    else:
+        return redirect(url_for('form'))
+
+@app.route('/download_contours/<study_name>')
+def download_contours(study_name):
+    file_path = f"{config['deployConfig'].TEMP_FOLDER}/{study_name}/contours.mat"
+    if path.exists(file_path):
+        return send_file(file_path, as_attachment=True)
+    else:
+        flash(f"El estudio {study_name} no posee un archivo de contornos .mat.")
+        return redirect(url_for('admin'))
+
+@app.route('/upload-contours/<study_name>', methods=['POST'])
+def upload_contours(study_name):
+    uploaded_file = request.files['file']
+    if uploaded_file:
+        file_path = f"{config['deployConfig'].TEMP_FOLDER}/{study_name}/contours.mat"
+        uploaded_file.save(file_path)
+        flash(f"Se actualizaron los contornos del estudio: {study_name}")
+    else:
+        flash(f"El estudio {study_name} no posee un archivo de contornos .mat")
+    return redirect(url_for('admin'))
+
+@app.route('/enable_contours/<study_id>', methods=['POST'])
+def enable_contours(study_id):
+    if current_user.is_authenticated and current_user.admin:
+        ModelStudy.enableStudyContoursById(db, study_id)
+        flash(f"Se habilitaron los contornos para la subida del estudio con ID: {study_id}")
+        return redirect(url_for('admin'))
+
 
 
 @app.route('/form', methods = ['GET'])
