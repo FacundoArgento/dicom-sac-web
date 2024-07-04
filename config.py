@@ -3,6 +3,7 @@ from decouple import config
 class Config:
     SECRET_KEY = config('SECRET_KEY')
     TEMP_FOLDER = config('TEMP_FOLDER')
+    MNT_FOLDER = config('MNT_FOLDER')
     AK = config('AK')
     SK = config('SK')
     HUAWEI_SERVER = config('HUAWEI_SERVER')

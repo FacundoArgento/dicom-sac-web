@@ -97,7 +97,7 @@ def admin():
 
 @app.route('/download_contours/<study_name>')
 def download_contours(study_name):
-    file_path = f"{config['deployConfig'].TEMP_FOLDER}/{study_name}/contours.mat"
+    file_path = f"{config['deployConfig'].MNT_FOLDER}/{study_name}/contours.mat"
     if path.exists(file_path):
         return send_file(file_path, as_attachment=True)
     else:
