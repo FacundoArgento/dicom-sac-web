@@ -15,7 +15,7 @@ def uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, t
         save_contour(temp_folder, contour_file, actual_study_name)
         anonymize_files(os.path.join(temp_folder, actual_study_name))
         encoded_study_name = renameStudyTmpFolder(temp_folder, actual_study_name, study_name)
-        upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, os.path.join(temp_folder, encoded_study_name))
+        #upload_folders(institution, operator, tipoEstudio, diagnosis, equipo, os.path.join(temp_folder, encoded_study_name))
         response = True
     except OSError as err:
         print("OS error: ", err)
@@ -23,7 +23,7 @@ def uploadCompleteStudy(institution, operator, tipoEstudio, diagnosis, equipo, t
     except Exception as err:
         print("Exception: ", err)
     finally:
-        remove_tmp_folders(temp_folder, encoded_study_name)
+        #remove_tmp_folders(temp_folder, encoded_study_name)
         return response
 
 
