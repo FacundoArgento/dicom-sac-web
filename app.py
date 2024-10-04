@@ -98,8 +98,10 @@ def admin():
 @app.route('/download_contours/<study_name>')
 def download_contours(study_name):
     file_path = f"{config['deployConfig'].MNT_FOLDER}/{study_name}/contours.mat"
+    study = ModelStudy.getStudyByName(db, study_name)
+    file_name = f"contour_id_{study.id}.mat"
     if path.exists(file_path):
-        return send_file(file_path, as_attachment=True)
+        return send_file(file_path, as_attachment=True, download_name=file_name)
     else:
         flash(f"El estudio {study_name} no posee un archivo de contornos .mat.")
         return redirect(url_for('admin'))
